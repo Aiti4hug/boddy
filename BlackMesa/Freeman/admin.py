@@ -40,3 +40,5 @@ class CategoryAdmin(TranslationAdmin):
 admin.site.register(UserProfile)
 admin.site.register(Rating)
 admin.site.register(Review)
+admin.site.register(Cart)
+admin.site.register(CarItem)

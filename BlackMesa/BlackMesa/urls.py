@@ -36,6 +36,6 @@ schema_view = get_schema_view(
 urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include('Freeman.urls')),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('god/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('fck/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

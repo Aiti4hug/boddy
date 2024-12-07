@@ -1,8 +1,13 @@
-from .views import *
 from django.urls import path
+from .views import *
 
 
 urlpatterns = [
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+
     path('', ProductListViewSet.as_view({'get': 'list',
                                          'post': 'create'}), name='product_list'),
 
@@ -40,4 +45,11 @@ urlpatterns = [
                                                     'put': 'update',
                                                     'delete': 'destroy'}), name='review_detail'),
 
+    path('cart/', CartViewSet.as_view({'get': 'retrieve'}), name='cart_detail'),
+
+
+    path('cart_items/', CarItemViewSet.as_view({'get': 'list',
+                                                'post': 'create'}), name='car_item_list'),
+    path('cart_items/<int:pk>/', CarItemViewSet.as_view({'put': 'update',
+                                                         'delete': 'destroy'}))
 ]

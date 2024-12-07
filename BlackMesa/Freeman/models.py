@@ -1,12 +1,17 @@
-from django.db import models
+from tkinter.constants import CASCADE
 
-class UserProfile(models.Model):
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
+from phonenumber_field.modelfields import PhoneNumberField
+
+
+class UserProfile(AbstractUser):
     user_image = models.ImageField(upload_to='user_images/', null=True, blank=True)
-    age = models.PositiveSmallIntegerField(verbose_name='age')
-    phone_number = models.IntegerField()
-    data_register = models.DateTimeField(auto_now_add=True)
+    age = models.PositiveSmallIntegerField(verbose_name='age', null=True, blank=True,
+                                           validators=[MinValueValidator(18), MaxValueValidator(80)])
+    phone_number = PhoneNumberField(null=True, blank=True, region='KG')
+    data_register = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     STATUS_CHOICES = (
         ('gold', 'gold'),
         ('silver', 'silver'),
@@ -77,3 +82,36 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.user}, {self.product}'
+
+
+class Cart(models.Model):
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='cart')
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user}'
+
+    def get_total_price(self):
+        total_price = sum(item.get_total_price() for item in self.items.all())
+        discount = 0
+
+        if self.user.status == 'gold':
+            discount = 0.75
+        elif self.user.status == 'silver':
+            discount = 0.50
+        elif self.user.status == 'bronze':
+            discount = 0.25
+
+        final_price = total_price * (1 - discount)
+        return final_price
+
+class CarItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.cart}, {self.product}'
+
+    def get_total_price(self):
+        return self.product.price * self.quantity
