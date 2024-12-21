@@ -36,7 +36,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.PositiveSmallIntegerField()
     check_origin = models.BooleanField(default=True)
-    product_video = models.FileField(upload_to='product_video', null=True, blank=True)
+    product_video = models.FileField(upload_to='product_video/', null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True, blank=True)
 
